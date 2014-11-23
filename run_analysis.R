@@ -79,6 +79,6 @@ names(extracted_data)  <- features2
 #5 From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
 library(plyr)
-independent_tidy_data2 <- ddply(extracted_data, .(Subject,Activity), numcolwise(mean))
+independent_tidy_data <- ddply(extracted_data, .(Subject,Activity), numcolwise(mean))
 
 write.table(independent_tidy_data, "indep_tidy_data.txt", row.name=FALSE)
