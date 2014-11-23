@@ -1,5 +1,7 @@
 setwd("C:/Users/End User OEM/Documents/Rprogramming/Getting and Cleaning Data/Getting and Clearning Data")
 
+
+
 #1. Merges the training and the test sets to create one data set.
 
 # The training data set
@@ -38,6 +40,9 @@ colnames(combined_data) <- c(as.character(features[,2]),"Subject","Activity")
 meanStd <- grepl("(mean|std)",features[,2])
 extracted_data <- combined_data[,meanStd]
 
+#Column names don't copy over. 
+names(extracted_data) <- names(combined_data[,meanStd])
+
 #3. Uses descriptive activity names to name the activities in the data set
 
 #the numbers in the last column of extracted_data are mapped in activity_labels.txt
@@ -46,14 +51,34 @@ labels <- read.table("UCI HAR Dataset/activity_labels.txt")
 extracted_data$Activity<-labels[extracted_data$Activity,2]
 
 
-#4 Appropriately labels the data set with descriptive variable names.
+#4 See above
+#  Because of how my flow in creating this document is I have place part for of this project here. 
+features2<- names(extracted_data)
 
-#vaiable name was actually already appropriately labeled in part #1 using the below code.
-#colnames(combined_data) <- c(as.character(features[,2]),"Subject","Activity")
-#by subsetting and transposing the data the colname stayed.
+
+# Took these names from the features_into.text document. 
+features2 <- gsub('\\(|\\)',"",features2) # goodbye to the ()
+features2 <- gsub("mean"," Mean value",features2,ignore.case=T)
+features2 <- gsub("std"," Standard deviation",features2,ignore.case=T)
+features2 <- gsub("mad"," Median absolute deviation",features2,ignore.case=T)
+features2 <- gsub("max"," Largest value in array",features2,ignore.case=T)
+features2 <- gsub("energy","Energy measure. Sum of the squares divided by the number of values",features2,ignore.case=T)
+features2 <- gsub("iqr"," Interquartile range",features2,ignore.case=T)
+features2 <- gsub("entropy"," Signal entropy",features2,ignore.case=T)
+features2 <- gsub("arCoeff"," Autorregresion coefficients with Burg order equal to 4",features2,ignore.case=T)
+features2 <- gsub("correlation"," correlation coefficient between two signals",features2,ignore.case=T)
+features2 <- gsub("maxInds"," index of the frequency component with largest magnitude",features2,ignore.case=T)
+features2 <- gsub("meanFreq"," Weighted average of the frequency components to obtain a mean frequency",features2,ignore.case=T)
+features2 <- gsub("skewness"," skewness of the frequency domain signal",features2,ignore.case=T)
+features2 <- gsub("kurtosis"," kurtosis of the frequency domain signal ",features2,ignore.case=T)
+features2 <- gsub("bandsEnergy"," Energy of a frequency interval within the 64 bins of the FFT of each window",features2,ignore.case=T)
+features2 <- gsub("angle"," Angle between to vectors",features2,ignore.case=T)
+
+names(extracted_data)  <- features2
 
 #5 From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
+library(plyr)
 independent_tidy_data <- ddply(extracted_data, .(Subject,Activity), numcolwise(mean))
 
-write.table(independent_tidy_data_5, "indep_tidy_data.txt", row.name=FALSE)
+write.table(independent_tidy_data, "indep_tidy_data.txt", row.name=FALSE)
